@@ -53,14 +53,33 @@ router.get('/episode_dates/:month', async (req, res, next) => {
 
 // Route to fetch subject matter
 router.get('/subject_matter', async (req, res, next) => {
-  try {
-	const result = await pool.query('SELECT * FROM subject_matter');
-	const subjectMatter = result.rows;
-	res.json(subjectMatter);
-  } catch (err) {
-	console.error('Error fetching subject_matter:', err);
-	next(err);
-  }
-});
+	try {
+	  const { filter } = req.query; // Get the filter parameter from the request query
+	  
+	  const result = await pool.query('SELECT * FROM subject_matter');
+	  const subjectMatter = result.rows;
+	  
+	  // Filter the results based on the subject matter
+	  const filteredSubjectMatter = subjectMatter.filter((item) => {
+		return item.subject_matter === filter;
+	  });
+  
+	  // Remove keys with false values
+	  const cleanedSubjectMatter = filteredSubjectMatter.map((item) => {
+		const cleanedItem = {};
+		for (const key in item) {
+		  if (item[key] !== false) {
+			cleanedItem[key] = item[key];
+		  }
+		}
+		return cleanedItem;
+	  });
+	  
+	  res.json(cleanedSubjectMatter);
+	} catch (err) {
+	  console.error('Error fetching subject_matter:', err);
+	  next(err);
+	}
+  });
 
 module.exports = router;
