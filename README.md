@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=The%20Joy%20Of%20Coding&fontColor=FFFFFF" alt="WEB Development"/>
+</div>
+
 # atlas-the-joy-of-painting-api
 
 ## Project Context
