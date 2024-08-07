@@ -1,0 +1,61 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+  }
+  
+  .circle-menu {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 2s ease-in-out; /* Smooth transition */
+  }
+  
+  .circle-menu.spin {
+    animation: spin 2s infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .menu-item {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: rotate(calc(360deg / 6 * var(--i))) translate(120px) rotate(calc(-360deg / 6 * var(--i)));
+    transition: transform 0.3s;
+  }
+  
+  .menu-item:hover {
+    transform: rotate(calc(360deg / 6 * var(--i))) translate(130px) rotate(calc(-360deg / 6 * var(--i)));
+    background-color: #0056b3;
+  }
+  
+  .menu-item::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 120px;
+    background-color: #007bff;
+    top: -60px;
+    transform-origin: bottom;
+    transform: rotate(calc(360deg / 6 * var(--i)));
+  }
+  
