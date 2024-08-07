@@ -18,7 +18,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/chris85gillis/atlas-the-joy-of-painting-api.git"
+		"url": "git+https://github.com/cpmoore0317/gallery_of_bob_ross.git"
 	},
 	"keywords": [
 		"Bob Ross",
@@ -28,10 +28,10 @@
 		"Express",
 		"PostgreSQL"
 	],
-	"author": "Chris Gillis",
+	"author": "Parker Moore",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/chris85gillis/atlas-the-joy-of-painting-api.git"
+		"url": "https://github.com/cpmoore0317/gallery_of_bob_ross.git"
 	},
-	"homepage": "https://github.com/chris85gillis/atlas-the-joy-of-painting-api.git"
+	"homepage": "https://github.com/cpmoore0317/gallery_of_bob_ross.git"
 }
