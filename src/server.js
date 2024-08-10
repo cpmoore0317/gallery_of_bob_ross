@@ -1,12 +1,26 @@
 const express = require('express');
-const { Pool } = require('pg');
-const routes = require('./routes');
-
+const mongoose = require('mongoose');
 const app = express();
+const port = 4000;
 
-app.use('/', routes);
+app.use(express.json());
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/the_joy_of_painting', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+mongoose.connection.once('open', () => {
+  console.log('Connected to MongoDB');
+});
+
+// Define routes
+app.get('/episodes', (req, res) => {
+  // Logic to fetch data from MongoDB
+  res.send('Episodes endpoint');
+});
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
