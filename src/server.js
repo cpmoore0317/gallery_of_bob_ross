@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const port = 4000;
-const episodeRouter = require('../src/models/episodes'); // Ensure this path is correct
+const episodeRouter = require('../src/routes'); // Ensure this path is correct
 
 app.use(express.json());
 app.use('/episodes', episodeRouter);

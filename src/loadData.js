@@ -10,7 +10,11 @@ async function fetchData() {
     const collection = db.collection('episodes_data');
 
     const documents = await collection.find({}).toArray();
-    console.log('Documents:', documents);
+    if (documents.length === 0) {
+      console.log('No documents found.');
+    } else {
+      console.log('Documents:', documents);
+    }
   } catch (err) {
     console.error('Error:', err);
   } finally {
