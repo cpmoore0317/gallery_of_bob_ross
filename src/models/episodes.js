@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 // Define schema matching your data structure
 const episodeSchema = new mongoose.Schema({
-  EPISODE: String,
-  TITLE: String,
+  Season: String,
+  Episode_title: String,
   APPLE_FRAME: Number,
   AURORA_BOREALIS: Number,
   BARN: Number,
