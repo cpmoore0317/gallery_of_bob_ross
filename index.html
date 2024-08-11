@@ -97,24 +97,69 @@
     </section>
     <!-- Gallery section-->
     <section class="bg-light" id="gallery">
-        <div class="container px-4">
-            <div class="row gx-4 justify-content-center">
-                <div class="col-lg-8">
-                    <h2>Gallery</h2>
-                    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut optio velit inventore,
-                        expedita quo laboriosam possimus ea consequatur vitae, doloribus consequuntur ex. Nemo assumenda
-                        laborum vel, labore ut velit dignissimos.</p>
+        <div class="row gx-4 justify-content-center">
+        <h2>Gallery</h2>
+        </div>
+        <!-- Search Bar Section -->
+    <div>
+        <div class="row justify-content-center align-items-start" id="searchbar-section">
+            <div class="col-sm-12 col-md-4 mt-3 text-light">
+                <p>KEYWORDS:</p>
+                <div class="searchbar border-bottom mt-0 mb-4">
+                    <div class="input-form">
+                        <div class="input-form-search">
+                            <button id="search-button" type="submit" class="btn btn-link text-white">
+                                <span class="search-icon">
+                                    <img src="./images/search.png">
+                                </span>
+                            </button>
+                        </div>
+                        <input type="search" class="form-filler border-0 searchbar text-light"
+                            placeholder="Search by keywords" aria-describedby="search-button">
+                    </div>
                 </div>
             </div>
+            <div class="col-sm-6 col-md-4 mt-3 text-light">
+                <p>SORT BY:</p>
+                <div class="searchbar border-bottom mt-0 mb-4">
+                    <select class="options searchbar text-white border-0" id="option2">
+                        <option class="bg-white text-violet">ALL</option>
+                        <option class="bg-white text-violet">Year</option>
+                        <option class="bg-white text-violet">Month</option>
+                        <option class="bg-white text-violet">Objects</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4 mt-3 text-light">
+                <p>FILTER BY EPISODES WHEEL:</p>
+            </div>
         </div>
-        <div class="circle-menu">
-            <div class="menu-item" style="--i:0; background-color: #DB0000;">11-15</div>
-            <div class="menu-item" style="--i:1; background-color: #C79B00;"">16-20</div>
-            <div class="menu-item" style="--i:2; background-color: #FFCC00;"">21-25</div>
-            <div class="menu-item" style="--i:3; background-color: #0C4B33;"">26-32</div>
-            <div class="menu-item" style="--i:4; background-color: #000F89;"">1-5</div>
-            <div class="menu-item" style="--i:5; background-color: #4E1500;"">6-10</div>
+    </div>
+
+    <!-- Data Population Section -->
+    <div class="row justify-content-start mt-4">
+        <div class="col-12 col-md-8">
+            <!-- Example Data Card -->
+            <div class="card mb-4">
+                <img src="./images/sample.png" class="card-img-top" alt="Sample Image">
+                <div class="card-body">
+                    <h5 class="card-title">Sample Data Title</h5>
+                    <p class="card-text">This is a sample description for the data that will be populated here.</p>
+                </div>
+            </div>
+            <!-- Add more data cards here -->
         </div>
+    </div>
+
+    <!-- Circle Menu Positioned on the Right -->
+    <div class="circle-menu">
+        <div class="menu-item" style="--i:0; background-color: #DB0000;">11-15</div>
+        <div class="menu-item" style="--i:1; background-color: #C79B00;">16-20</div>
+        <div class="menu-item" style="--i:2; background-color: #FFCC00;">21-25</div>
+        <div class="menu-item" style="--i:3; background-color: #0C4B33;">26-32</div>
+        <div class="menu-item" style="--i:4; background-color: #000F89;">1-5</div>
+        <div class="menu-item" style="--i:5; background-color: #4E1500;">6-10</div>
+    </div>
     </section>
     <!-- Contact section-->
     <section id="contact">

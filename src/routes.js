@@ -24,6 +24,16 @@ router.get('/', async (req, res) => {
 	}
 });
 
+// Get all episodes sorted by season
+router.get('/sort-by-season', async (req, res) => {
+	try {
+		const episodes = await Episode.find().sort({ season: 1 }); // 1 for ascending order, -1 for descending
+		res.json(episodes);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+});
+
 // Add other routes (e.g., GET by ID, POST, PUT, DELETE) as needed
 
 module.exports = router;
