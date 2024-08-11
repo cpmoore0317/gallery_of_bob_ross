@@ -7,13 +7,24 @@ async function fetchData() {
   try {
     await client.connect();
     const db = client.db('the_joy_of_painting');
-    const collection = db.collection('episodes_data');
+    // fetfch data from episodes_datacollection
+    const episodesCollection = db.collection('episodes_data');
+    const episodes = await episodesCollection.find({}).toArray();
 
-    const documents = await collection.find({}).toArray();
-    if (documents.length === 0) {
+    // fetchdata from colors_used collection
+    const colorsCollection = db.collection('colors_used_data');
+    const colors = await colorsCollection.find({}).toArray();
+
+    // fetch data from dates collection
+    const datesCollection = db.collection('episode_dates_data');
+    const dates = await datesCollection.find({}).toArray();
+
+    if (episodes.length === 0 && colors.length === 0 && dates.length ===0) {
       console.log('No documents found.');
     } else {
-      console.log('Documents:', documents);
+      console.log('episodes:', episodes);
+      console.log('episodes:', colors);
+      console.log('episodes:', dates);
     }
   } catch (err) {
     console.error('Error:', err);
