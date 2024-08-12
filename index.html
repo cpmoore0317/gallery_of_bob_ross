@@ -2,31 +2,143 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circular Search Menu</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Gallery of Bob Ross</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
 </head>
-<header>
-    <h1 class="title">Welcome to the Bob Ross Gallery</h1>
-</header>
-<body>
-    <div class="tv-frame">
-        <div class="content">
-            <!-- Your gallery content goes here -->
+
+<body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+        <div class="container px-4">
+            <a class="navbar-brand" href="#page-top">Start Bootstrap</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span
+                    class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#quotes">Quotes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="knob knob-left"></div>
-        <div class="knob knob-right"></div>
-    </div>
-    <div class="circle-menu">
-        <div class="menu-item" style="--i:0;">Item 1</div>
-        <div class="menu-item" style="--i:1;">Item 2</div>
-        <div class="menu-item" style="--i:2;">Item 3</div>
-        <div class="menu-item" style="--i:3;">Item 4</div>
-        <div class="menu-item" style="--i:4;">Item 5</div>
-        <div class="menu-item" style="--i:5;">Item 6</div>
-    </div>
-    <script src="script.js"></script>
+    </nav>
+    <!-- Header-->
+    <header class="text-white rgb-background">
+        <div class="container px-4 text-center">
+            <h1 class="fw-bolder">Gallery of Bob Ross</h1>
+            <p class="lead">A digital gallery for Bob Ross - The Joy of Painting </p>
+            <a class="btn btn-lg btn-light" href="#gallery">Open Gallery</a>
+        </div>
+    </header>
+    <!-- Quotes section-->
+    <section id="quotes">
+        <div class="container px-4">
+            <div class="row gx-4 justify-content-center">
+                <div class="col-lg-8">
+                    <h2>Quotes</h2>
+                    <!--Carousel Section -->
+                    <div class="image-carousel">
+                        <!-- Full-width images with number and caption text -->
+                        <div class="mySlides">
+                            <div class="numbertext">1 / 3</div>
+                            <img src="images/mountain_retreat.jpg" style="width:100%; height: 475px;">
+                            <div class="text">"We don't make mistakes, we just have happy accidents"</div>
+                        </div>
+
+                        <div class="mySlides">
+                            <div class="numbertext">2 / 3</div>
+                            <img src="images/stormy_seas.jpg" style="width:100%; height: 475px;">
+                            <div class="text">"The secret to doing anything is believing that you can do it. Anything that you believe you can do strong enough, you can do. Anything. As long as you believe."</div>
+                        </div>
+
+                        <div class="mySlides">
+                            <div class="numbertext">3 / 3</div>
+                            <img src="images/the_old_mill.jpg" style="width:100%; height: 475px;">
+                            <div class="text">"Talent is a pursued interest. Anything that you’re willing to practice, you can do."</div>
+                        </div>
+
+                        <!-- Next and previous buttons -->
+                        <a class="prev" onclick="plusSlides(-1)" style="color: white;">&#10094;</a>
+                        <a class="next" onclick="plusSlides(1)" style="color: white;">&#10095;</a>
+                    </div>
+
+                    <br>
+
+                    <!-- The dots/circles -->
+                    <div style="text-align:center">
+                        <span class="dot" onclick="currentSlide(1)"></span>
+                        <span class="dot" onclick="currentSlide(2)"></span>
+                        <span class="dot" onclick="currentSlide(3)"></span>
+                    </div>
+                    
+                    <br>
+
+                    <p class="lead">This is a great place to talk about your webpage. This template is purposefully
+                        unstyled so you can use it as a boilerplate or starting point for you own landing page designs!
+                        This template features:</p>
+                    <ul>
+                        <li>Clickable nav links that smooth scroll to page sections</li>
+                        <li>Responsive behavior when clicking nav links perfect for a one page website</li>
+                        <li>Bootstrap's scrollspy feature which highlights which section of the page you're on in the
+                            navbar</li>
+                        <li>Minimal custom CSS so you are free to explore your own unique design options</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!-- Gallery section-->
+    <section class="bg-light" id="gallery">
+        <div class="container px-4">
+            <div class="row gx-4 justify-content-center">
+                <div class="col-lg-8">
+                    <h2>Gallery</h2>
+                    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut optio velit inventore,
+                        expedita quo laboriosam possimus ea consequatur vitae, doloribus consequuntur ex. Nemo assumenda
+                        laborum vel, labore ut velit dignissimos.</p>
+                </div>
+            </div>
+        </div>
+        <div class="circle-menu">
+            <div class="menu-item" style="--i:0; background-color: #DB0000;">11-15</div>
+            <div class="menu-item" style="--i:1; background-color: #C79B00;"">16-20</div>
+            <div class="menu-item" style="--i:2; background-color: #FFCC00;"">21-25</div>
+            <div class="menu-item" style="--i:3; background-color: #0C4B33;"">26-32</div>
+            <div class="menu-item" style="--i:4; background-color: #000F89;"">1-5</div>
+            <div class="menu-item" style="--i:5; background-color: #4E1500;"">6-10</div>
+        </div>
+    </section>
+    <!-- Contact section-->
+    <section id="contact">
+        <div class="container px-4">
+            <div class="row gx-4 justify-content-center">
+                <div class="col-lg-8">
+                    <h2>Contact us</h2>
+                    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero odio fugiat
+                        voluptatem dolor, provident officiis, id iusto! Obcaecati incidunt, qui nihil beatae magnam et
+                        repudiandae ipsa exercitationem, in, quo totam.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer-->
+    <footer class="py-5 bg-dark">
+        <div class="container px-4">
+            <p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p>
+        </div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
 </body>
 
 </html>
