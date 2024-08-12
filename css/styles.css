@@ -222,12 +222,14 @@
     background-color: #717171;
   }
 
+
+  
 /* Circle Menu */
 
 .circle-menu {
   position: absolute;
   right: 20px;
-  top: 1850px;
+  top: 2750px;
   width: 300px;
   height: 300px;
   border-radius: 50%;
@@ -261,6 +263,7 @@
   align-items: center;
   transform: rotate(calc(360deg / 6 * var(--i))) translate(120px) rotate(calc(-360deg / 6 * var(--i)));
   transition: transform 0.3s;
+  cursor: pointer;
 }
 
 .menu-item:hover {
@@ -294,7 +297,7 @@
 /* Media query for tablets (e.g., screen width less than 1024px) */
 @media (max-width: 1024px) {
   .circle-menu {
-    top: 1850px; /* Adjusted top position for tablets */
+    top: 2750px; /* Adjusted top position for tablets */
     right: 10px; /* Slightly closer to the right edge */
     width: 250px; /* Slightly smaller size */
     height: 250px;
@@ -304,7 +307,7 @@
 /* Media query for phones (e.g., screen width less than 768px) */
 @media (max-width: 768px) {
   .circle-menu {
-    top: 2060px; /* Adjusted top position for phones */
+    top: 3025px; /* Adjusted top position for phones */
     right: 5px; /* Closer to the right edge */
     width: 200px; /* Smaller size for smaller screens */
     height: 200px;

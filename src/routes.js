@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const logger = require('../logger');
 const Episode = require('../src/models/episodes');
 const Dates = require('../src/models/dates');
 const Colors = require('../src/models/colors');
@@ -34,6 +35,23 @@ router.get('/sort-by-season', async (req, res) => {
 	}
 });
 
+router.get('/api/paintings', async (req, res) => {
+	try {
+	  const { seasons } = req.query;
+	  const seasonsArray = seasons.split(',').map(Number);
+	  
+	  logger.info(`Fetching paintings for seasons: ${seasonsArray.join(', ')}`);
+  
+	  const paintings = await db.collection('colors_used_data').find({ Season: { $in: seasonsArray } }).toArray();
+	  
+	  logger.info(`Found ${paintings.length} paintings`);
+  
+	  res.json(paintings);
+	} catch (error) {
+	  logger.error('Error fetching data', { error: error.message });
+	  res.status(500).send('Error fetching data');
+	}
+  });
 // Add other routes (e.g., GET by ID, POST, PUT, DELETE) as needed
 
 module.exports = router;

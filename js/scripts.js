@@ -6,6 +6,7 @@
 //
 // Scripts
 // 
+import logger from '../logger';
 import Logger from '../logger';
 
 window.addEventListener('DOMContentLoaded', event => {
@@ -77,58 +78,54 @@ function showSlides(n) {
 
 // fetching data for circle menu items
 // Select all menu items in the circle menu
-const menuItems = document.querySelectorAll('.circle-menu .menu-item');
-
-menuItems.forEach(item => {
-  item.addEventListener('click', async () => {
-    const seasonRange = item.getAttribute('data-season');
-    const url = seasonRange
-      ? `http://localhost:4000/episodes/sort-by-season?season=${seasonRange}`
-      : `http://localhost:4000/episodes/sort-by-season`;
-
-    Logger.info(`Fetching data from: ${url}`);
-
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+// Example function to fetch data with logging
+async function fetchPaintings(seasons) {
+  try {
+    console.log(`Requesting paintings for seasons: ${seasons.join(', ')}`);
+    
+    const response = await fetch(`/api/paintings?seasons=${seasons.join(',')}`);
+    if (response.ok) {
       const data = await response.json();
-      Logger.log('Data received:');
-      Logger.log(JSON.stringify(data));
-
-      const results = document.getElementById('gallery');
-      results.innerHTML = '';
-
-      data.forEach(episode => {
-        const card = document.createElement('div');
-        card.classList.add('card', 'mb-4');
-
-        const img = document.createElement('img');
-        img.src = episode.image || './images/sample.png'; // Use a placeholder image if none available
-        img.classList.add('card-img-top');
-        img.alt = `Image for ${episode.title}`;
-
-        const cardBody = document.createElement('div');
-        cardBody.classList.add('card-body');
-
-        const title = document.createElement('h5');
-        title.classList.add('card-title');
-        title.textContent = `Season ${episode.season}, Episode ${episode.episode} - ${episode.title}`;
-
-        const description = document.createElement('p');
-        description.classList.add('card-text');
-        description.textContent = episode.description || 'No description available.';
-
-        cardBody.appendChild(title);
-        cardBody.appendChild(description);
-        card.appendChild(img);
-        card.appendChild(cardBody);
-        results.appendChild(card);
-      });
-    } catch (error) {
-      Logger.error(`Failed to fetch data: ${error.message}`);
+      console.log(`Received ${data.length} paintings`);
+      displayPaintings(data);
+    } else {
+      logger.info('Failed to fetch data');
     }
+  } catch (error) {
+    logger.info('Error fetching data:', error);
+  }
+}
+
+// Function to display the fetched paintings
+function displayPaintings(paintings) {
+  // Clear previous content
+  const cardContainer = document.querySelector('.row.justify-content-start.mt-4');
+  cardContainer.innerHTML = ''; // Clear existing cards
+
+  // Create and append new cards
+  paintings.forEach(painting => {
+    const cardHtml = `
+      <div class="card mb-4">
+        <img src="${painting.img_src}" class="card-img-top" alt="${painting.Episode_title}">
+        <div class="card-body">
+          <h5 class="card-title">${painting.Episode_title}</h5>
+          <p class="card-text">Season: ${painting.Season} - Episode: ${painting.episode}</p>
+          <a href="${painting.youtube_src}" class="btn btn-primary">Watch on YouTube</a>
+        </div>
+      </div>
+    `;
+    cardContainer.innerHTML += cardHtml;
+  });
+}
+
+// Add event listeners to menu items
+document.querySelectorAll('.circle-menu .menu-item').forEach(item => {
+  item.addEventListener('click', function() {
+    // Extract the seasons from the data attribute
+    const seasonsRange = this.getAttribute('data-season');
+    const seasonsArray = seasonsRange.split('-').map(num => num.trim());
+    
+    // Fetch data based on the selected seasons
+    fetchPaintings(seasonsArray);
   });
 });
