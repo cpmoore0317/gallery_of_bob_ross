@@ -1,0 +1,14 @@
+{"error":"Cannot read properties of undefined (reading 'split')","level":"error","message":"Error fetching data","timestamp":"2024-08-12T22:30:10.649Z"}
+{"error":"Cannot read properties of undefined (reading 'split')","level":"error","message":"Error fetching data","timestamp":"2024-08-12T22:30:26.772Z"}
+{"level":"info","message":"Fetching paintings for seasons: ","timestamp":"2024-08-12T23:57:34.294Z"}
+{"error":"db is not defined","level":"error","message":"Error fetching data","timestamp":"2024-08-12T23:57:34.298Z"}
+{"level":"info","message":"Fetching paintings for seasons: ","timestamp":"2024-08-12T23:57:41.393Z"}
+{"error":"db is not defined","level":"error","message":"Error fetching data","timestamp":"2024-08-12T23:57:41.394Z"}
+{"level":"info","message":"Fetching paintings for seasons: ","timestamp":"2024-08-12T23:57:54.495Z"}
+{"error":"db is not defined","level":"error","message":"Error fetching data","timestamp":"2024-08-12T23:57:54.496Z"}
+{"level":"info","message":"Fetching paintings for seasons: ","timestamp":"2024-08-13T01:52:57.328Z"}
+{"error":"db is not defined","level":"error","message":"Error fetching data","timestamp":"2024-08-13T01:52:57.338Z"}
+{"level":"info","message":"Fetching paintings for seasons: ","timestamp":"2024-08-13T01:53:22.064Z"}
+{"error":"db is not defined","level":"error","message":"Error fetching data","timestamp":"2024-08-13T01:53:22.064Z"}
+{"count":1,"level":"info","message":"Fetched episodes sorted by season","season":"S16E10","timestamp":"2024-08-13T02:16:24.513Z"}
+{"count":1,"level":"info","message":"Fetched episodes sorted by season","season":"S16E10","timestamp":"2024-08-13T02:19:05.910Z"}

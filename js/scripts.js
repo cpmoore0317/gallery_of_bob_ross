@@ -5,9 +5,9 @@
 */
 //
 // Scripts
-// 
-import logger from '../logger';
-import Logger from '../logger';
+// clear
+const logger = require('../logger');
+
 
 window.addEventListener('DOMContentLoaded', event => {
 
@@ -79,53 +79,47 @@ function showSlides(n) {
 // fetching data for circle menu items
 // Select all menu items in the circle menu
 // Example function to fetch data with logging
-async function fetchPaintings(seasons) {
-  try {
-    console.log(`Requesting paintings for seasons: ${seasons.join(', ')}`);
-    
-    const response = await fetch(`/api/paintings?seasons=${seasons.join(',')}`);
-    if (response.ok) {
-      const data = await response.json();
-      console.log(`Received ${data.length} paintings`);
-      displayPaintings(data);
-    } else {
-      logger.info('Failed to fetch data');
-    }
-  } catch (error) {
-    logger.info('Error fetching data:', error);
-  }
-}
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', async () => {
+      const circleMenu = document.querySelector('.circle-menu');
+      circleMenu.classList.add('spin');
 
-// Function to display the fetched paintings
-function displayPaintings(paintings) {
-  // Clear previous content
-  const cardContainer = document.querySelector('.row.justify-content-start.mt-4');
-  cardContainer.innerHTML = ''; // Clear existing cards
+      // Get the data attribute or some identifier from the clicked item
+      const season = item.getAttribute('data-season');
+      logger.info(`Menu item clicked: Fetching data for season ${season}`);
 
-  // Create and append new cards
-  paintings.forEach(painting => {
-    const cardHtml = `
-      <div class="card mb-4">
-        <img src="${painting.img_src}" class="card-img-top" alt="${painting.Episode_title}">
-        <div class="card-body">
-          <h5 class="card-title">${painting.Episode_title}</h5>
-          <p class="card-text">Season: ${painting.Season} - Episode: ${painting.episode}</p>
-          <a href="${painting.youtube_src}" class="btn btn-primary">Watch on YouTube</a>
-        </div>
-      </div>
-    `;
-    cardContainer.innerHTML += cardHtml;
-  });
-}
+      try {
+          const response = await fetch(`http://localhost:4000/episodes?season=${season}`);
+          logger.info(`Received response for season ${season}`);
 
-// Add event listeners to menu items
-document.querySelectorAll('.circle-menu .menu-item').forEach(item => {
-  item.addEventListener('click', function() {
-    // Extract the seasons from the data attribute
-    const seasonsRange = this.getAttribute('data-season');
-    const seasonsArray = seasonsRange.split('-').map(num => num.trim());
-    
-    // Fetch data based on the selected seasons
-    fetchPaintings(seasonsArray);
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          logger.info(`Data for season ${season} successfully parsed as JSON`);
+
+          // Update the UI with the fetched data
+          const episodeList = document.getElementById('episodeList');
+          episodeList.innerHTML = ''; // Clear previous list items
+
+          data.forEach(episode => {
+              const listItem = document.createElement('li');
+              listItem.innerHTML = `
+                  <strong>${episode.Episode_title}</strong><br>
+                  <a href="${episode.youtube_src}" target="_blank">Watch on YouTube</a>
+              `;
+              episodeList.appendChild(listItem);
+              logger.info(`Episode "${episode.Episode_title}" added to the list for season ${season}.`);
+          });
+      } catch (error) {
+          logger.error(`Failed to fetch data for season ${season}:`, error.message);
+      }
+
+      // Remove the 'spin' class after 2 seconds to stop the animation
+      setTimeout(() => {
+          circleMenu.classList.remove('spin');
+      }, 2000);
   });
 });
+
