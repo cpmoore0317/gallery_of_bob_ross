@@ -84,19 +84,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to fetch episodes from the server
   function fetchEpisodes(page) {
-      const url = `http://localhost:4000/episodes/fields?page=${page}&limit=${resultsPerPage}`;
+    const url = `http://localhost:4000/episodes/fields?page=${page}&limit=${resultsPerPage}`;
 
-      fetch(url)
-          .then(response => response.json())
-          .then(data => {
-              populateEpisodes(data.episodes);
-              setupPagination(data.totalPages); // Adjust if you have pagination
-          })
-          .catch(error => {
-              console.error('Error fetching data:', error);
-          });
-  }
-
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error fetching data:', data.error);
+                return;
+            }
+            populateEpisodes(data.episodes);
+            setupPagination(data.totalPages, data.currentPage); // Ensure you use `currentPage` in setupPagination
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
   // Function to populate the episodes in the UI
   function populateEpisodes(episodes) {
       episodeList.innerHTML = ''; // Clear previous results
@@ -132,26 +135,25 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Function to set up pagination (if needed)
-  function setupPagination(totalPages) {
-      const pagination = document.getElementById('pagination');
-      pagination.innerHTML = ''; // Clear previous pagination
+  function setupPagination(totalPages, currentPage) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = ''; // Clear previous pagination
 
-      for (let i = 1; i <= totalPages; i++) {
-          const pageLink = document.createElement('button');
-          pageLink.textContent = i;
-          pageLink.className = 'page-link';
-          if (i === currentPage) {
-              pageLink.classList.add('active');
-          }
+    for (let i = 1; i <= totalPages; i++) {
+        const pageLink = document.createElement('button');
+        pageLink.textContent = i;
+        pageLink.className = 'page-link';
+        if (i === currentPage) {
+            pageLink.classList.add('active');
+        }
 
-          pageLink.addEventListener('click', function() {
-              currentPage = i;
-              fetchEpisodes(currentPage);
-          });
+        pageLink.addEventListener('click', function() {
+            fetchEpisodes(i); // Fetch episodes for the selected page
+        });
 
-          pagination.appendChild(pageLink);
-      }
-  }
+        pagination.appendChild(pageLink);
+    }
+}
 
   // Automatically fetch data on page load
   fetchEpisodes(currentPage);

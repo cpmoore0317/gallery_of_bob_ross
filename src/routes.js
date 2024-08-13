@@ -51,6 +51,38 @@ router.get('/sorted-by-season', async (req, res) => {
   }
 });
 
+// Route to fetch episode by season and episode
+// curl -X GET http://localhost:4000/episodes/1/1
+router.get('/:season/:episode', async (req, res) => {
+  try {
+    const { season, episode } = req.params;
+
+    // Log the request details
+    logger.info('Fetching episode data', { season, episode });
+
+    // Query the Episode collection
+    const episodeData = await Episode.findOne(
+      { Season: season, episode: episode },
+      { Episode_title: 1, youtube_src: 1, img_src: 1 }
+    );
+
+    if (!episodeData) {
+      logger.warn('Episode not found', { season, episode });
+      return res.status(404).json({ error: 'Episode not found' });
+    }
+
+    // Log successful fetch
+    logger.info('Episode data fetched successfully', { season, episode, episodeData });
+
+    res.json(episodeData);
+  } catch (error) {
+    // Log the error with additional context
+    logger.error('Error fetching episode data', { message: error.message, stack: error.stack });
+
+    res.status(500).json({ error: 'An error occurred while fetching the episode data' });
+  }
+});
+
 
 // Fetch episodes for multiple seasons (e.g., 1 through 5)
 // curl -X GET "http://localhost:4000/episodes/season/1-5"
