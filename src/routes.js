@@ -44,11 +44,8 @@ router.get('/:season/:episode', async (req, res) => {
         const { season, episode } = req.params;
         const episodeData = await CombinedData.findOne({ season: season, episode: episode }, {
             TITLE: 1,
-            season: 1,
-            episode: 1,
-            air_date: 1,
             youtube_src: 1,
-            img_link: 1
+            img_src: 1
         });
 
         if (!episodeData) {

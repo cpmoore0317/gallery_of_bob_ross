@@ -50,11 +50,9 @@ window.addEventListener('DOMContentLoaded', event => {
 
         // Update UI with episode details
         document.getElementById('episodeTitle').textContent = data.TITLE || 'N/A';
-        document.getElementById('episodeSeason').textContent = data.season || 'N/A';
-        document.getElementById('episodeNumber').textContent = data.episode || 'N/A';
         document.getElementById('episodeYouTube').href = data.youtube_src || '#';
         document.getElementById('episodeYouTube').textContent = data.youtube_src ? 'Watch' : 'N/A';
-        document.getElementById('episodeImage').src = data.img_link || '';
+        document.getElementById('episodeImage').src = data.img_src || '';
         document.getElementById('episodeResult').classList.remove('d-none');
       })
       .catch(error => {

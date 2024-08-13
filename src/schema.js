@@ -101,7 +101,7 @@ const combinedSchema = new mongoose.Schema({
   Yellow_Ochre: Number,
   youtube_src: String,
   Episode_title: String,
-  Air_date: String,
+  AIR_DATE: String,
   Year: Number,
 });
 
