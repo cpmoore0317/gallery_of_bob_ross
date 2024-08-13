@@ -6,10 +6,11 @@ const episodeRouter = require('../src/routes'); // Ensure this path is correct
 
 app.use(express.json());
 app.use('/episodes', episodeRouter);
+app.use('/api', episodeRouter); // Use the routes
 
-// tester
+// tests route
 app.use((req, res, next) => {
-  res.status(404).send('Sorry, can\'t find that!');
+  res.status(404).send('Sorry, can\'t find that route!');
 });
 
 

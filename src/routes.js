@@ -3,6 +3,7 @@ const router = express.Router();
 const logger = require('../logger'); // Adjust path as necessary
 const mongoose = require('mongoose');
 const Episode = require('../src/models/episodes');
+const { getFilteredEpisodes } = require('../controllers/episodeController');
 
 // Define MongoDB collection names
 const COLLECTIONS = {
@@ -39,8 +40,8 @@ router.get('/', async (req, res) => {
 
 router.get('/sorted-by-season', async (req, res) => {
   try {
-    const episodes = await Episode.find({}, 'Season episode youtube_src Episode_title')
-      .sort({ Season: 1 }); // Sort by Season in ascending order
+    const episodes = await Episode.find({}, 'Season episode youtube_src Episode_title id')
+      .sort({ Season: 1, id: 1 }); // Sort by Season in ascending order
 
     logger.info('Fetched episodes sorted by season in ascending order', { count: episodes.length });
     res.json({ episodes });
@@ -52,9 +53,13 @@ router.get('/sorted-by-season', async (req, res) => {
 
 
 // Fetch episodes for multiple seasons (e.g., 1 through 5)
-router.get('/seasons/:startSeason-:endSeason', async (req, res) => {
+// curl -X GET "http://localhost:4000/episodes/season/1-5"
+
+router.get('/season/:startSeason-:endSeason', async (req, res) => {
   try {
     const { startSeason, endSeason } = req.params;
+
+    // Convert season parameters to integers
     const start = parseInt(startSeason, 10);
     const end = parseInt(endSeason, 10);
 
@@ -62,17 +67,22 @@ router.get('/seasons/:startSeason-:endSeason', async (req, res) => {
       return res.status(400).json({ message: 'Invalid season range' });
     }
 
-    // Fetch episodes for the range of seasons and sort by Season and episode
-    const episodes = await Episode.find({ Season: { $gte: start, $lte: end } })
-      .sort({ Season: 1, episode: 1 });
+    // Log the parameters and query being executed
+    logger.info('Querying episodes for season range', { startSeason, endSeason });
+
+    // Fetch episodes where the season is within the specified range
+    const episodes = await Episode.find({
+      Season: { $gte: start, $lte: end }
+    }).sort({ Season: 1 });
+
+    logger.info('Query result', { count: episodes.length, episodes });
 
     if (episodes.length === 0) {
-      return res.status(404).json({ message: 'No episodes found for this range of seasons' });
+      return res.status(404).json({ message: 'No episodes found for this season range' });
     }
 
-    // Select desired fields and rename _id to id
+    // Format and return the results
     const result = episodes.map(ep => ({
-      
       id: ep.id,
       Episode_title: ep.Episode_title,
       Season: ep.Season,
@@ -80,43 +90,64 @@ router.get('/seasons/:startSeason-:endSeason', async (req, res) => {
       youtube_src: ep.youtube_src
     }));
 
-    logger.info('Fetched episodes for seasons', { startSeason, endSeason, count: result.length });
+    logger.info('Fetched episodes for season range', { startSeason, endSeason, count: result.length });
     res.json(result);
   } catch (error) {
-    logger.error('Error fetching episodes for seasons', { message: error.message });
+    logger.error('Error fetching episodes for season range', { message: error.message });
     res.status(500).json({ message: error.message });
   }
 });
+
+router.get('/test-route/:param', (req, res) => {
+  console.log(req.params);
+  res.send('Route is working!');
+});
+
+// trying to fetch seasons 6-10
+
 
 // Search by Episode_title and return Season, episode, and youtube_src
 // curl -X GET "http://localhost:4000/episodes/search-by-title?title=BALMY%20BEACH"
 
 router.get('/search-by-title', async (req, res) => {
   try {
-    const { title } = req.query;
+    const { title, page = 1, limit = 10 } = req.query;
     if (!title) {
       return res.status(400).json({ message: 'Title query parameter is required' });
     }
 
-    // Search for the episode by title
-    const episode = await Episode.findOne({ Episode_title: title });
+    // Calculate the number of documents to skip based on the current page and limit
+    const skip = (page - 1) * limit;
 
-    if (!episode) {
+    // Search for the episode by title
+    const episode = await Episode.find({ Episode_title: { $regex: title, $options: 'i' } }) // Case-insensitive search
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    if (episode.length === 0) {
       return res.status(404).json({ message: 'Episode not found' });
     }
 
+    // Count the total number of matching episodes for pagination
+    const totalEpisodes = await Episode.countDocuments({ Episode_title: { $regex: title, $options: 'i' } });
+    const totalPages = Math.ceil(totalEpisodes / limit);
+
     // Return the desired fields
-    const result = {
-      
-      id: ep.id,
+    const result = episode.map(episode => ({
+
+      // id: ep.id,
       Episode_title: episode.Episode_title,
       Season: episode.Season,
       episode: episode.episode,
       youtube_src: episode.youtube_src
-    };
+    }));
 
     logger.info('Fetched episode by title', { title, result });
-    res.json(result);
+    res.json({
+      episode: result,
+      currentPage: parseInt(page),
+      totalPages: totalPages,
+    });
   } catch (error) {
     logger.error('Error searching for episode by title', { message: error.message });
     res.status(500).json({ message: error.message });
@@ -142,7 +173,7 @@ router.get('/season/:season', async (req, res) => {
 
     // Select desired fields
     const result = episodes.map(ep => ({
-     
+
       id: ep.id,
       Episode_title: ep.Episode_title,
       Season: ep.Season,
@@ -160,13 +191,37 @@ router.get('/season/:season', async (req, res) => {
 
 // Get all episodes with specific fields
 // curl -X GET "http://localhost:4000/episodes/fields"
+// curl -X GET "http://localhost:4000/episodes/fields"
 router.get('/fields', async (req, res) => {
   try {
-    // Query the collection and select specific fields
-    const episodes = await Episode.find({}, 'Season episode youtube_src Episode_title'); // Adjust field names based on your schema
+    const { page = 1, limit = 10 } = req.query;
+    
+    // Ensure page and limit are integers
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
 
-    logger.info('Fetched episodes with specific fields', { count: episodes.length });
-    res.json({ episodes });
+    if (pageNumber < 1 || limitNumber < 1) {
+      return res.status(400).json({ message: 'Page and limit must be positive integers' });
+    }
+
+    // Calculate the number of documents to skip based on the current page and limit
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Fetch the episodes with pagination
+    const episodes = await Episode.find({}, 'Season episode youtube_src Episode_title')
+      .skip(skip)
+      .limit(limitNumber);
+
+    // Count the total number of matching episodes for pagination
+    const totalEpisodes = await Episode.countDocuments({});
+    const totalPages = Math.ceil(totalEpisodes / limitNumber);
+
+    // Return the paginated result
+    res.json({
+      episodes,
+      currentPage: pageNumber,
+      totalPages: totalPages,
+    });
   } catch (error) {
     logger.error('Error fetching episodes with specific fields', { message: error.message });
     res.status(500).json({ message: error.message });
@@ -178,7 +233,7 @@ router.get('/fields', async (req, res) => {
 router.get('/id/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Assuming `id` is stored as a string in your MongoDB collection
     const episode = await Episode.findOne({ id: id });
 
@@ -223,7 +278,7 @@ router.get('/ids/:startId-:endId', async (req, res) => {
 
     // Format response to include the custom id and formatted _id
     const result = episodes.map(ep => ({
-      
+
       id: ep.id,
       Episode_title: ep.Episode_title,
       Season: ep.Season,
@@ -275,5 +330,6 @@ router.get('/ids/:startId-:endId/rangetwo', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 module.exports = router;

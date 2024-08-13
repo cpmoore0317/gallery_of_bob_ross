@@ -76,50 +76,85 @@ function showSlides(n) {
   dots[slideIndex - 1].className += " active";
 }
 
-// fetching data for circle menu items
-// Select all menu items in the circle menu
-// Example function to fetch data with logging
-document.querySelectorAll('.menu-item').forEach(item => {
-  item.addEventListener('click', async () => {
-      const circleMenu = document.querySelector('.circle-menu');
-      circleMenu.classList.add('spin');
+//FETCH FROM SERVER
+document.addEventListener('DOMContentLoaded', function() {
+  const episodeList = document.getElementById('episodeList');
+  let currentPage = 1;
+  const resultsPerPage = 5;
 
-      // Get the data attribute or some identifier from the clicked item
-      const season = item.getAttribute('data-season');
-      logger.info(`Menu item clicked: Fetching data for season ${season}`);
+  // Function to fetch episodes from the server
+  function fetchEpisodes(page) {
+      const url = `http://localhost:4000/episodes/fields?page=${page}&limit=${resultsPerPage}`;
 
-      try {
-          const response = await fetch(`http://localhost:4000/episodes?season=${season}`);
-          logger.info(`Received response for season ${season}`);
+      fetch(url)
+          .then(response => response.json())
+          .then(data => {
+              populateEpisodes(data.episodes);
+              setupPagination(data.totalPages); // Adjust if you have pagination
+          })
+          .catch(error => {
+              console.error('Error fetching data:', error);
+          });
+  }
 
-          if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+  // Function to populate the episodes in the UI
+  function populateEpisodes(episodes) {
+      episodeList.innerHTML = ''; // Clear previous results
+
+      episodes.forEach(episode => {
+          const card = document.createElement('div');
+          card.className = 'card mb-4';
+
+          const img = document.createElement('img');
+          img.src = episode.youtube_src || './images/sample.png'; // Replace with actual image URL if available
+          img.style = 'width:30%; height: 275px;';
+          img.className = 'card-img-top';
+          img.alt = episode.Episode_title;
+
+          const cardBody = document.createElement('div');
+          cardBody.className = 'card-body';
+
+          const cardTitle = document.createElement('h5');
+          cardTitle.className = 'card-title';
+          cardTitle.textContent = episode.Episode_title;
+
+          const cardText = document.createElement('p');
+          cardText.className = 'card-text';
+          cardText.textContent = `Season: ${episode.Season}, Episode: ${episode.episode}`;
+
+          cardBody.appendChild(cardTitle);
+          cardBody.appendChild(cardText);
+          card.appendChild(img);
+          card.appendChild(cardBody);
+
+          episodeList.appendChild(card);
+      });
+  }
+
+  // Function to set up pagination (if needed)
+  function setupPagination(totalPages) {
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = ''; // Clear previous pagination
+
+      for (let i = 1; i <= totalPages; i++) {
+          const pageLink = document.createElement('button');
+          pageLink.textContent = i;
+          pageLink.className = 'page-link';
+          if (i === currentPage) {
+              pageLink.classList.add('active');
           }
 
-          const data = await response.json();
-          logger.info(`Data for season ${season} successfully parsed as JSON`);
-
-          // Update the UI with the fetched data
-          const episodeList = document.getElementById('episodeList');
-          episodeList.innerHTML = ''; // Clear previous list items
-
-          data.forEach(episode => {
-              const listItem = document.createElement('li');
-              listItem.innerHTML = `
-                  <strong>${episode.Episode_title}</strong><br>
-                  <a href="${episode.youtube_src}" target="_blank">Watch on YouTube</a>
-              `;
-              episodeList.appendChild(listItem);
-              logger.info(`Episode "${episode.Episode_title}" added to the list for season ${season}.`);
+          pageLink.addEventListener('click', function() {
+              currentPage = i;
+              fetchEpisodes(currentPage);
           });
-      } catch (error) {
-          logger.error(`Failed to fetch data for season ${season}:`, error.message);
-      }
 
-      // Remove the 'spin' class after 2 seconds to stop the animation
-      setTimeout(() => {
-          circleMenu.classList.remove('spin');
-      }, 2000);
-  });
+          pagination.appendChild(pageLink);
+      }
+  }
+
+  // Automatically fetch data on page load
+  fetchEpisodes(currentPage);
 });
+
 

@@ -35,32 +35,44 @@ async function run() {
 
     // Process the first file
     await processFile('/home/moonwalker/Atlas-T4_Projects/PartnerProjects/final_project/gallery_of_bob_ross/data/colorsdatadump.csv', (row) => {
-      mergedData.push(row); // Add base data
+      mergedData[row.id] = { ...mergedData[row.id], ...row }; // Add base data
     });
 
     // Process the second file and merge data
     await processFile('/home/moonwalker/Atlas-T4_Projects/PartnerProjects/final_project/gallery_of_bob_ross/data/datadump.csv', (row) => {
-      const existingRecord = mergedData.find((record) => record.id === row.id);
-      if (existingRecord) {
-        existingRecord.someField = row.someField; // Add or merge fields
+      if (mergedData[row.id]) {
+        mergedData[row.id] = { ...mergedData[row.id], ...row }; // Merge fields
+      } else {
+        mergedData[row.id] = row; // Add new data
       }
     });
 
     // Process the third file and merge data
     await processFile('/home/moonwalker/Atlas-T4_Projects/PartnerProjects/final_project/gallery_of_bob_ross/data/datesdatadump.csv', (row) => {
-      const existingRecord = mergedData.find((record) => record.id === row.id);
-      if (existingRecord) {
-        existingRecord.anotherField = row.anotherField;
+      if (mergedData[row.id]) {
+        mergedData[row.id] = { ...mergedData[row.id], ...row }; // Merge fields
+      } else {
+        mergedData[row.id] = row; // Add new data
       }
     });
 
+    // Convert mergedData to an array for insertion
+    const dataArray = Object.values(mergedData);
+
     // Insert the merged data into MongoDB
     try {
-      await collection.insertMany(mergedData);
-      logger.info('Data successfully inserted into MongoDB');
-    } catch (err) {
-      logger.error(`Error inserting data into MongoDB: ${err.message}`);
+     // Upsert documents to avoid duplicates
+     for (const doc of dataArray) {
+      await collection.updateOne(
+        { id: doc.id },
+        { $set: doc },
+        { upsert: true }
+      );
     }
+    logger.info('Data successfully inserted into MongoDB');
+  } catch (err) {
+    logger.error(`Error inserting data into MongoDB: ${err.message}`);
+  }
 
   } catch (err) {
     logger.error(`Error connecting to MongoDB: ${err.message}`);

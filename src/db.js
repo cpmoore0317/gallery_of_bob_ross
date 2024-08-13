@@ -8,6 +8,10 @@ const client = new MongoClient(uri);
 
 let db;
 
+db.episodes_data.find({ Season: { $gte: "6", $lte: "10" } }).pretty();
+db.episodes_data.find({ Season: { $gte: 6, $lte: 10 } }).pretty();
+
+
 async function connectToDb() {
   try {
     await client.connect();
