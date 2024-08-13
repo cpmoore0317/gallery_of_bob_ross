@@ -1,21 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const Episode = require('../src/models/episodes');
-const Dates = require('../src/models/dates');
-const Colors = require('../src/models/colors');
+const CombinedData = require('../src/schema');
+
 
 // Get all episodes
 router.get('/', async (req, res) => {
 	try {
-	  const episodes = await Episode.find();
-	  const colors = await Colors.find();
-	  const dates = await Dates.find();
+	  const data = await CombinedData.find();
 
-	  const results = {
-		episodes,
-		colors,
-		dates
-	  };
+	  const results = {data};
 
 	  console.log('Fetched episodes, colors, and dates:', results); // Log the fetched data
 	  res.json(results);
@@ -35,7 +28,7 @@ router.get('/season/:season', async (req, res) => {
 		return res.status(400).json({ message: 'Invalid season parameter' });
 	  }
   
-	  const episodes = await Episode.find({ season: season });
+	  const episodes = await CombinedData.find({ season: season });
 	  if (episodes.length === 0) {
 		return res.status(404).json({ message: 'No episodes found for this season' });
 	  }

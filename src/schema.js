@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-// Define schema matching your data structure
-const episodeSchema = new mongoose.Schema({
+
+const combinedSchema = new mongoose.Schema({
   EPISODE: String,
   TITLE: String,
   APPLE_FRAME: Number,
@@ -71,9 +71,40 @@ const episodeSchema = new mongoose.Schema({
   WINDOW_FRAME: Number,
   WINTER: Number,
   WOOD_FRAMED: Number,
+  _id: mongoose.Schema.Types.ObjectId,
+  Alizarin_Crimson: Number,
+  Black_Gesso: Number,
+  Bright_Red: Number,
+  Burnt_Umber: Number,
+  Cadmium_Yellow: Number,
+  color_hex: String,
+  colors: String,
+  Dark_Sienna: Number,
+  episode: Number,
+  id: Number,
+  img_src: String,
+  Indian_Red: Number,
+  Indian_Yellow: Number,
+  Liquid_Black: Number,
+  Liquid_Clear: Number,
+  Midnight_Black: Number,
+  num_colors: Number,
+  painting_index: Number,
+  PAINTING_TITLE: String,
+  Phthalo_Blue: Number,
+  Phthalo_Green: Number,
+  Prussian_Blue: Number,
+  Sap_Green: Number,
+  season: Number,
+  Titanium_White: Number,
+  Van_Dyke_Brown: Number,
+  Yellow_Ochre: Number,
+  youtube_src: String,
+  Episode_title: String,
+  Air_date: String,
+  Year: Number,
 });
 
-// Create a model based on the schema
-const Episode = mongoose.model('Episode', episodeSchema, 'episodes_data');
+const CombinedData = mongoose.model('CombinedData', combinedSchema, 'episodes_data');
 
-module.exports = Episode;
+module.exports = CombinedData;
