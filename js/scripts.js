@@ -52,7 +52,6 @@ window.addEventListener('DOMContentLoaded', event => {
         document.getElementById('episodeTitle').textContent = data.TITLE || 'N/A';
         document.getElementById('episodeSeason').textContent = data.season || 'N/A';
         document.getElementById('episodeNumber').textContent = data.episode || 'N/A';
-        document.getElementById('episodeAirDate').textContent = data.air_date || 'N/A';
         document.getElementById('episodeYouTube').href = data.youtube_src || '#';
         document.getElementById('episodeYouTube').textContent = data.youtube_src ? 'Watch' : 'N/A';
         document.getElementById('episodeImage').src = data.img_link || '';
