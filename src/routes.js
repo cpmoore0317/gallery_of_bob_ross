@@ -18,9 +18,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get episodes by season
-// Curl example:
 // curl -X GET http://localhost:4000/episodes/season/1
-
 router.get('/season/:season', async (req, res) => {
 	try {
 	  const season = parseInt(req.params.season);
@@ -37,8 +35,32 @@ router.get('/season/:season', async (req, res) => {
 	} catch (error) {
 	  res.status(500).json({ message: error.message });
 	}
-  });
-  
+});
+
+// Route to fetch episode by season and episode
+// curl -X GET http://localhost:4000/episodes/1/1
+router.get('/:season/:episode', async (req, res) => {
+    try {
+        const { season, episode } = req.params;
+        const episodeData = await CombinedData.findOne({ season: season, episode: episode }, {
+            TITLE: 1,
+            season: 1,
+            episode: 1,
+            air_date: 1,
+            youtube_src: 1,
+            img_link: 1
+        });
+
+        if (!episodeData) {
+            return res.status(404).json({ error: 'Episode not found' });
+        }
+
+        res.json(episodeData);
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while fetching the episode data' });
+    }
+});
+
 // Add other routes (e.g., GET by ID, POST, PUT, DELETE) as needed
 
 module.exports = router;
