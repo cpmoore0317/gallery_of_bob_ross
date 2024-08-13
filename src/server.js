@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 4000;
 const episodeRouter = require('../src/routes'); // Ensure this path is correct
+const cors = require('cors');
 
+app.use(cors())
 app.use(express.json());
 app.use('/episodes', episodeRouter);
 app.use('/api', episodeRouter); // Use the routes
