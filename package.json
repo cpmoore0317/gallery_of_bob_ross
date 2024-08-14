@@ -3,19 +3,25 @@
 	"version": "1.0.0",
 	"description": "API to filter episodes of The Joy Of Painting",
 	"main": "src/server.js",
+	"type": "module",
 	"scripts": {
 		"start": "node src/server.js",
 		"dev": "nodemon src/server.js",
-		"load-data": "node src/loadData.js"
+		"load-data": "node src/loadData.js",
+		"test": "mocha"
 	},
 	"dependencies": {
 		"cors": "^2.8.5",
 		"csv-parser": "^3.0.0",
 		"express": "^4.17.1",
-		"pg": "^8.7.1"
+		"pg": "^8.7.1",
+		"supertest": "^7.0.0"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.7"
+		"chai": "^5.1.1",
+		"mocha": "^10.7.3",
+		"nodemon": "^2.0.7",
+		"sinon": "^18.0.0"
 	},
 	"repository": {
 		"type": "git",
