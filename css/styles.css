@@ -222,10 +222,14 @@
     background-color: #717171;
   }
 
+
+  
 /* Circle Menu */
 
 .circle-menu {
-  position: relative;
+  position: absolute;
+  right: 60px;
+  top: 90px;
   width: 300px;
   height: 300px;
   border-radius: 50%;
@@ -259,6 +263,7 @@
   align-items: center;
   transform: rotate(calc(360deg / 6 * var(--i))) translate(120px) rotate(calc(-360deg / 6 * var(--i)));
   transition: transform 0.3s;
+  cursor: pointer;
 }
 
 .menu-item:hover {
@@ -286,6 +291,26 @@
 @media (prefers-reduced-motion: no-preference) {
   :root {
     scroll-behavior: smooth;
+  }
+}
+
+/* Media query for tablets (e.g., screen width less than 1024px) */
+@media (max-width: 1024px) {
+  .circle-menu {
+    top: 60px; /* Adjusted top position for tablets */
+    right: 5px; /* Slightly closer to the right edge */
+    width: 250px; /* Slightly smaller size */
+    height: 250px;
+  }
+}
+
+/* Media query for phones (e.g., screen width less than 768px) */
+@media (max-width: 768px) {
+  .circle-menu {
+    top: 360px; /* Adjusted top position for phones */
+    right: 120px; /* Closer to the right edge */
+    width: 200px; /* Smaller size for smaller screens */
+    height: 200px;
   }
 }
 
@@ -11035,3 +11060,122 @@ section {
   padding-top: 9rem;
   padding-bottom: 9rem;
 }
+
+#searchbar-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #333;
+}
+
+/* Styling for each column */
+#searchbar-section .col-sm-12,
+#searchbar-section .col-sm-6 {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styling for the labels */
+#searchbar-section p {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+/* Styling for the search bar */
+.searchbar {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: transparent;
+}
+
+/* Styling for the input */
+.input-form {
+  display: flex;
+  width: 100%;
+}
+
+.input-form input[type="search"] {
+  flex: 1;
+  padding: 5px 10px;
+  background-color: transparent;
+  color: white;
+}
+
+.input-form-seaarch {
+  display: flex;
+  align-items: center;
+  padding-right: 5px;
+}
+
+/* Styling for the dropdowns */
+select.options {
+  width: 100%;
+  padding: 5px;
+  background-color: transparent;
+  color: white;
+  appearance: none; /* Removes the default arrow */
+}
+
+/* Custom arrow for the dropdowns */
+select.options::after {
+  content: "▼";
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+}
+
+/* Ensure dropdown options are readable */
+select.options option {
+  color: black;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  #searchbar-section {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+}
+
+#episodeList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /*  columns */
+  grid-auto-rows: minmax(150px, auto);
+  gap: 16px; /* Adjust the space between items */
+  margin: 0 auto;
+  max-width: 1200px; 
+  padding-top: 40px;
+}
+
+#contact-us {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#contact-us .form-control {
+  border-radius: 0.25rem;
+}
+
+#contact-us .btn {
+  border-radius: 0.25rem;
+}
+
+/* .card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} */
+
+/* .card-img-top {
+  width: 100%;
+  height: auto;
+} */
+
+/* .card-body {
+  padding: 16px;
+} */
