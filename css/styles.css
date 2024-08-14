@@ -116,6 +116,15 @@
   animation: rgbBackground 20s ease-in-out infinite; /* Smooth transition over 20s */
 }
 
+.text-center {
+  text-align: center;
+}
+
+.btn-lg {
+  display: inline-flex;
+  align-items: center;
+}
+
 /* Slideshow container */
 .slideshow-container {
   height: 400px;
@@ -264,6 +273,9 @@
   transform: rotate(calc(360deg / 6 * var(--i))) translate(120px) rotate(calc(-360deg / 6 * var(--i)));
   transition: transform 0.3s;
   cursor: pointer;
+  text-align: center;
+  font-size: small;
+  font-weight: bold;
 }
 
 .menu-item:hover {
