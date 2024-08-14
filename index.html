@@ -191,6 +191,23 @@
             <p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p>
         </div>
     </footer>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('search-form').addEventListener('submit', function (event) {
+          event.preventDefault(); // Prevents the form from submitting and reloading the page
+          const query = document.getElementById('search-input').value.trim();
+          if (query === "") return; // Exit if the search query is empty
+      
+          console.log('Search query:', query); // Log the search query
+      
+          try {
+            fetchEpisodes(1, null, null, query); // Fetch episodes based on search query
+          } catch (error) {
+            console.error('Error during fetch:', error); // Log any errors that occur
+          }
+        });
+      });
+    </script>      
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
