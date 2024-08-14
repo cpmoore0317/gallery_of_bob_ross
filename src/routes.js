@@ -143,7 +143,7 @@ router.get('/test-route/:param', (req, res) => {
 
 router.get('/search-by-title', async (req, res) => {
   try {
-    const { title, page = 1, limit = 10 } = req.query;
+    const { title, page = 1, limit = 12 } = req.query;
     if (!title) {
       return res.status(400).json({ message: 'Title query parameter is required' });
     }
@@ -223,14 +223,13 @@ router.get('/season/:season', async (req, res) => {
 
 // Get all episodes with specific fields
 // curl -X GET "http://localhost:4000/episodes/fields"
-// curl -X GET "http://localhost:4000/episodes/fields"
 router.get('/fields', async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 12 } = req.query;
     
     // Ensure page and limit are integers
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
+    const pageNumber = parseInt(page, 12);
+    const limitNumber = parseInt(limit, 12);
 
     if (pageNumber < 1 || limitNumber < 1) {
       return res.status(400).json({ message: 'Page and limit must be positive integers' });
@@ -257,6 +256,45 @@ router.get('/fields', async (req, res) => {
   } catch (error) {
     logger.error('Error fetching episodes with specific fields', { message: error.message });
     res.status(500).json({ message: error.message });
+  }
+});
+
+// season range 1-5
+router.get('/episodes/fields', async (req, res) => {
+  const { seasonStart, seasonEnd, page = 1, limit = 10 } = req.query;
+
+  // Construct the base query
+  let query = 'SELECT * FROM episodes';
+  let queryParams = [];
+  
+  // Add conditions if season filtering is specified
+  if (seasonStart && seasonEnd) {
+      queryParams.push(seasonStart, seasonEnd);
+      query += ' WHERE season BETWEEN $1 AND $2';
+  }
+
+  // Pagination logic
+  const offset = (page - 1) * limit;
+  query += ` ORDER BY season ASC, episode ASC LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`;
+  queryParams.push(limit, offset);
+
+  try {
+      const result = await db.query(query, queryParams);
+      const episodes = result.rows;
+
+      // Get the total count for pagination
+      const countResult = await db.query('SELECT COUNT(*) FROM episodes WHERE season BETWEEN $1 AND $2', [seasonStart, seasonEnd]);
+      const totalEpisodes = parseInt(countResult.rows[0].count, 10);
+      const totalPages = Math.ceil(totalEpisodes / limit);
+
+      res.json({
+          episodes,
+          totalPages,
+          currentPage: parseInt(page, 10),
+      });
+  } catch (error) {
+      console.error('Error fetching episodes:', error);
+      res.status(500).json({ error: 'Error fetching episodes' });
   }
 });
 
@@ -289,42 +327,30 @@ router.get('/id/:id', async (req, res) => {
 // targets id range 1-65 covers all seasons 1-5
 // curl -X GET "http://localhost:4000/episodes/ids/1-65"
 
-router.get('/ids/:startId-:endId', async (req, res) => {
+router.get('/episodes/ids/:range', async (req, res) => {
+  const { range } = req.params;
+  const [start, end] = range.split('-').map(Number);
+
+  if (!start || !end || isNaN(start) || isNaN(end)) {
+      return res.status(400).json({ error: 'Invalid range format' });
+  }
+
   try {
-    const { startId, endId } = req.params;
-    const start = parseInt(startId, 10);
-    const end = parseInt(endId, 10);
+      const episodes = await Episode.find({
+          id: { $gte: start, $lte: end }
+      });
 
-    if (isNaN(start) || isNaN(end) || start > end) {
-      return res.status(400).json({ message: 'Invalid ID range' });
-    }
+      if (episodes.length === 0) {
+          return res.status(404).json({ error: 'Episode not found' });
+      }
 
-    // Fetch episodes where the id is within the specified range
-    const episodes = await Episode.find({
-      id: { $gte: start, $lte: end }
-    }).sort({ id: 1 });
-
-    if (episodes.length === 0) {
-      return res.status(404).json({ message: 'No episodes found for this range of IDs' });
-    }
-
-    // Format response to include the custom id and formatted _id
-    const result = episodes.map(ep => ({
-
-      id: ep.id,
-      Episode_title: ep.Episode_title,
-      Season: ep.Season,
-      episode: ep.episode,
-      youtube_src: ep.youtube_src
-    }));
-
-    logger.info('Fetched episodes for IDs', { startId, endId, count: result.length });
-    res.json(result);
+      res.json({ episodes });
   } catch (error) {
-    logger.error('Error fetching episodes for IDs', { message: error.message });
-    res.status(500).json({ message: error.message });
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // trying to fetch episodes 66-130 by ids 66-130
 // testing with curl -X GET "http://localhost:4000/episodes/66-130/rangetwo" still not working though

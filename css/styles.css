@@ -228,8 +228,8 @@
 
 .circle-menu {
   position: absolute;
-  right: 20px;
-  top: 2750px;
+  right: 60px;
+  top: 90px;
   width: 300px;
   height: 300px;
   border-radius: 50%;
@@ -11061,15 +11061,6 @@ section {
   padding-bottom: 9rem;
 }
 
-/* .searchbar {
-	background-color: white;
-	border-radius: 3px;
-}
-
-#search-button {
-	text-decoration: none;
-} */
-/* General styling for the searchbar-section */
 #searchbar-section {
   display: flex;
   justify-content: space-between;
@@ -11147,3 +11138,44 @@ select.options option {
       align-items: flex-start;
   }
 }
+
+#episodeList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /*  columns */
+  grid-auto-rows: minmax(150px, auto);
+  gap: 16px; /* Adjust the space between items */
+  margin: 0 auto;
+  max-width: 1200px; 
+  padding-top: 40px;
+}
+
+#contact-us {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#contact-us .form-control {
+  border-radius: 0.25rem;
+}
+
+#contact-us .btn {
+  border-radius: 0.25rem;
+}
+
+/* .card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} */
+
+/* .card-img-top {
+  width: 100%;
+  height: auto;
+} */
+
+/* .card-body {
+  padding: 16px;
+} */

@@ -80,7 +80,7 @@ function showSlides(n) {
 window.addEventListener('DOMContentLoaded', function () {
   const episodeList = document.getElementById('episodeList');
   let currentPage = 1;
-  const resultsPerPage = 5;
+  const resultsPerPage = 10;
 
   // Function to fetch episodes from the server
   function fetchEpisodes(page) {
@@ -95,12 +95,13 @@ window.addEventListener('DOMContentLoaded', function () {
         }
         console.log('Data', data);
         populateEpisodes(data.episodes);
-        setupPagination(data.totalPages, data.currentPage); // Ensure you use `currentPage` in setupPagination
+        setupPagination(data.totalPages, data.currentPage);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
       });
   }
+
   // Function to populate the episodes in the UI
   function populateEpisodes(episodes) {
     episodeList.innerHTML = ''; // Clear previous results
@@ -109,11 +110,24 @@ window.addEventListener('DOMContentLoaded', function () {
       const card = document.createElement('div');
       card.className = 'card mb-4';
 
+      const youtubeUrl = episode.youtube_src;
+      const videoIdMatch = youtubeUrl.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      const videoId = videoIdMatch ? videoIdMatch[1] : null;
+      const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : './images/sample.png';
+
+      const link = document.createElement('a');
+      link.href = youtubeUrl;
+      link.target = '_blank';
+
       const img = document.createElement('img');
-      img.src = episode.youtube_src || './images/sample.png'; // Replace with actual image URL if available
-      img.style = 'width:30%; height: 275px;';
+      img.src = thumbnailUrl;
+      img.style.width = '100%';
+      img.style.height = '255px';
       img.className = 'card-img-top';
       img.alt = episode.Episode_title;
+
+      link.appendChild(img);
+      card.appendChild(link);
 
       const cardBody = document.createElement('div');
       cardBody.className = 'card-body';
@@ -128,7 +142,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
       cardBody.appendChild(cardTitle);
       cardBody.appendChild(cardText);
-      card.appendChild(img);
       card.appendChild(cardBody);
 
       episodeList.appendChild(card);
@@ -160,4 +173,96 @@ window.addEventListener('DOMContentLoaded', function () {
   fetchEpisodes(currentPage);
 });
 
+// Click on menu item 1-5
+document.getElementById('menu-item-1-5').addEventListener('click', function () {
+  console.log('Menu item 1-5 clicked');
+  const seasonStart = 1;
+  const seasonEnd = 5;
+  const page = 1;
+  const limit = 10;
+  const url = `http://localhost:4000/episodes/fields?seasonStart=${seasonStart}&seasonEnd=${seasonEnd}&page=${page}&limit=${limit}`;
 
+  console.log('Fetching from URL:', url);
+
+  // Fetch data from the server
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Episodes from Seasons 1-5:', data);
+      renderEpisodes(data.episodes); // Update the UI with the new episodes
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+    });
+});
+
+// Function to render episodes on the page (replacing old data)
+document.getElementById('search-form').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevents the form from submitting and reloading the page
+
+  const query = document.getElementById('search-input').value.trim();
+  if (query === "") return; // Exit if the search query is empty
+
+  fetch(`http://localhost:4000/episodes/search-by-title?title=${encodeURIComponent(query)}`)
+      .then(response => response.json())
+      .then(data => {
+          if (data.episode.length === 0) {
+              document.getElementById('episodeList').innerHTML = `<p>No results found for "${query}".</p>`;
+          } else {
+              // Clear previous results
+              document.getElementById('episodeList').innerHTML = '';
+              document.getElementById('pagination').innerHTML = '';
+
+              // Render new results
+              data.episode.forEach(ep => {
+                  const episodeElement = `
+                      <div class="col-12 col-md-4">
+                          <h3>${ep.Episode_title}</h3>
+                          <p>Season: ${ep.Season}, Episode: ${ep.episode}</p>
+                          <a href="${ep.youtube_src}" target="_blank">Watch on YouTube</a>
+                      </div>
+                  `;
+                  document.getElementById('episodeList').insertAdjacentHTML('beforeend', episodeElement);
+              });
+
+              // Optionally handle pagination if necessary
+              if (data.totalPages > 1) {
+                  // Populate pagination controls
+                  // Your pagination logic here...
+              }
+          }
+      })
+      .catch(error => console.error('Error fetching episode:', error));
+});
+
+// Function to extract YouTube ID from URL
+function extractYouTubeId(url) {
+  const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return videoIdMatch ? videoIdMatch[1] : null;
+}
+
+// contact form
+document.getElementById('feedback-form').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent default form submission
+
+  const feedback = document.getElementById('feedback').value;
+
+  // You might want to send this data to your server or process it accordingly
+  // For demonstration purposes, we'll just log it and show a success message
+  console.log('Feedback received:', feedback);
+
+  // Display success message
+  document.getElementById('feedback-response').innerHTML = `
+      <div class="alert alert-success" role="alert">
+          Thank you for your feedback! We appreciate your input.
+      </div>
+  `;
+
+  // Clear the feedback field
+  document.getElementById('feedback').value = '';
+});
