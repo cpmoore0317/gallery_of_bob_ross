@@ -76,43 +76,83 @@ function showSlides(n) {
   dots[slideIndex - 1].className += " active";
 }
 
-//FETCH FROM SERVER
+// FETCH FROM SERVER
 window.addEventListener('DOMContentLoaded', function () {
   const episodeList = document.getElementById('episodeList');
+  const pagination = document.getElementById('pagination');
   let currentPage = 1;
-  const resultsPerPage = 10;
+  const episodesPerPage = 10;
 
   // Function to fetch episodes from the server
-  function fetchEpisodes(page) {
-    const url = `http://localhost:4000/episodes/fields?page=${page}&limit=${resultsPerPage}`;
+  // Function to fetch episodes from the server
+  function fetchEpisodes(page, seasonStart = null, seasonEnd = null, query = null) {
+    let url = `http://localhost:4000/episodes/fields?page=${page}&limit=${episodesPerPage}`;
+
+    if (seasonStart && seasonEnd) {
+      url += `&seasonStart=${seasonStart}&seasonEnd=${seasonEnd}`;
+    }
+
+    if (query) {
+      url = `http://localhost:4000/episodes/search-by-title?title=${encodeURIComponent(query)}`;
+      console.log("Fetching with URL:", url); // Log the URL for debugging
+    }
 
     fetch(url)
-      .then(response => response.json())
+      .then(response => {
+        console.log('Response status:', response.status); // Log status code
+        if (!response.ok) {
+          // Handle HTTP errors
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => {
-        if (data.error) {
-          console.error('Error fetching data:', data.error);
+        console.log('Data received:', data); // Log data
+        if (data.error || (data.episode && !Array.isArray(data.episode))) {
+          console.error('Error fetching data:', data.error || 'Unexpected data format');
           return;
         }
-        console.log('Data', data);
-        populateEpisodes(data.episodes);
-        setupPagination(data.totalPages, data.currentPage);
+        if (query) {
+          populateEpisodes(data.episode, query); // Use 'episode' from the response
+        } else {
+          if (Array.isArray(data.episodes)) {
+            populateEpisodes(data.episodes); // Populate episodes for paginated results
+            setupPagination(data.totalPages, data.currentPage);
+          } else {
+            console.error('Expected "episodes" to be an array but got:', data.episodes);
+          }
+        }
       })
       .catch(error => {
-        console.error('Error fetching data:', error);
+        console.error('Fetch error:', error); // Log any fetch errors
       });
   }
 
   // Function to populate the episodes in the UI
-  function populateEpisodes(episodes) {
-    episodeList.innerHTML = ''; // Clear previous results
+  function populateEpisodes(episodes, query = null) {
+    episodeList.innerHTML = ''; // Clear previous episodes
+
+    // Check if 'episodes' is an array
+    if (!Array.isArray(episodes)) {
+      console.error('Expected episodes to be an array but got:', episodes);
+      return;
+    }
+
+    if (episodes.length === 0) {
+      episodeList.innerHTML = '<p>No episodes found.</p>'; // Display message if no episodes are found
+      return;
+    }
 
     episodes.forEach(episode => {
+      if (query && episode.Episode_title.toLowerCase() !== query.toLowerCase()) {
+        return; // Skip episodes that don't match the search query
+      }
+
       const card = document.createElement('div');
       card.className = 'card mb-4';
 
       const youtubeUrl = episode.youtube_src;
-      const videoIdMatch = youtubeUrl.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-      const videoId = videoIdMatch ? videoIdMatch[1] : null;
+      const videoId = extractYouTubeId(youtubeUrl);
       const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : './images/sample.png';
 
       const link = document.createElement('a');
@@ -146,13 +186,17 @@ window.addEventListener('DOMContentLoaded', function () {
 
       episodeList.appendChild(card);
     });
+
+    // Clear pagination if we're searching by title
+    if (query) {
+      pagination.innerHTML = '';
+    }
   }
 
   // Function to set up pagination (if needed)
   function setupPagination(totalPages, currentPage) {
-    const pagination = document.getElementById('pagination');
     pagination.innerHTML = ''; // Clear previous pagination
-
+  
     for (let i = 1; i <= totalPages; i++) {
       const pageLink = document.createElement('button');
       pageLink.textContent = i;
@@ -160,94 +204,86 @@ window.addEventListener('DOMContentLoaded', function () {
       if (i === currentPage) {
         pageLink.classList.add('active');
       }
-
+  
       pageLink.addEventListener('click', function () {
         fetchEpisodes(i); // Fetch episodes for the selected page
       });
-
+  
       pagination.appendChild(pageLink);
     }
   }
 
   // Automatically fetch data on page load
   fetchEpisodes(currentPage);
-});
 
-// Click on menu item 1-5
-document.getElementById('menu-item-1-5').addEventListener('click', function () {
-  console.log('Menu item 1-5 clicked');
-  const seasonStart = 1;
-  const seasonEnd = 5;
-  const page = 1;
-  const limit = 10;
-  const url = `http://localhost:4000/episodes/fields?seasonStart=${seasonStart}&seasonEnd=${seasonEnd}&page=${page}&limit=${limit}`;
+  // Handle search form submission
+  document.getElementById('search-form').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevents the form from submitting and reloading the page
 
-  console.log('Fetching from URL:', url);
+    const query = document.getElementById('search-input').value.trim();
+    if (query === "") return; // Exit if the search query is empty
 
-  // Fetch data from the server
-  fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Episodes from Seasons 1-5:', data);
-      renderEpisodes(data.episodes); // Update the UI with the new episodes
-    })
-    .catch(error => {
-      console.error('There was a problem with the fetch operation:', error);
-    });
-});
+    console.log('Search query:', query); // Log the search query
 
-// Function to render episodes on the page (replacing old data)
-document.getElementById('search-form').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevents the form from submitting and reloading the page
+    try {
+      fetchEpisodes(1, null, null, query); // Fetch episodes based on search query
+    } catch (error) {
+      console.error('Error during fetch:', error); // Log any errors that occur
+    }
+  });
 
-  const query = document.getElementById('search-input').value.trim();
-  if (query === "") return; // Exit if the search query is empty
+  function fetchEpisodes(page, seasonStart = null, seasonEnd = null, query = null) {
+    const resultsPerPage = 12; // or any other value you need
 
-  fetch(`http://localhost:4000/episodes/search-by-title?title=${encodeURIComponent(query)}`)
-      .then(response => response.json())
-      .then(data => {
-          if (data.episode.length === 0) {
-              document.getElementById('episodeList').innerHTML = `<p>No results found for "${query}".</p>`;
-          } else {
-              // Clear previous results
-              document.getElementById('episodeList').innerHTML = '';
-              document.getElementById('pagination').innerHTML = '';
+    let url = `http://localhost:4000/episodes/fields?page=${page}&limit=${resultsPerPage}`;
 
-              // Render new results
-              data.episode.forEach(ep => {
-                  const episodeElement = `
-                      <div class="col-12 col-md-4">
-                          <h3>${ep.Episode_title}</h3>
-                          <p>Season: ${ep.Season}, Episode: ${ep.episode}</p>
-                          <a href="${ep.youtube_src}" target="_blank">Watch on YouTube</a>
-                      </div>
-                  `;
-                  document.getElementById('episodeList').insertAdjacentHTML('beforeend', episodeElement);
-              });
+    if (seasonStart && seasonEnd) {
+      url += `&seasonStart=${seasonStart}&seasonEnd=${seasonEnd}`;
+    }
 
-              // Optionally handle pagination if necessary
-              if (data.totalPages > 1) {
-                  // Populate pagination controls
-                  // Your pagination logic here...
-              }
-          }
+    if (query) {
+      url = `http://localhost:4000/episodes/search-by-title?title=${encodeURIComponent(query)}`;
+    }
+
+    console.log('Fetching with URL:', url); // Log the URL
+
+    fetch(url)
+      .then(response => {
+        console.log('Response status:', response.status); // Log status code
+        if (!response.ok) {
+          // Handle HTTP errors
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
       })
-      .catch(error => console.error('Error fetching episode:', error));
+      .then(data => {
+        console.log('Data received:', data); // Log data
+        if (data.error || (data.episode && !Array.isArray(data.episode))) {
+          console.error('Error fetching data:', data.error || 'Unexpected data format');
+          return;
+        }
+        if (query) {
+          populateEpisodes(data.episode, query); // Use 'episode' from the response
+        } else {
+          populateEpisodes(data.episodes); // Assuming 'episodes' for paginated results
+          setupPagination(data.totalPages, data.currentPage);
+        }
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+      });
+  }
+
+  // Function to extract YouTube ID from URL
+  function extractYouTubeId(url) {
+    const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return videoIdMatch ? videoIdMatch[1] : null;
+  }
 });
 
-// Function to extract YouTube ID from URL
-function extractYouTubeId(url) {
-  const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  return videoIdMatch ? videoIdMatch[1] : null;
-}
 
 // contact form
-document.getElementById('feedback-form').addEventListener('submit', function(event) {
+document.getElementById('feedback-form').addEventListener('submit', function (event) {
   event.preventDefault(); // Prevent default form submission
 
   const feedback = document.getElementById('feedback').value;

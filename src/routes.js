@@ -142,6 +142,7 @@ router.get('/test-route/:param', (req, res) => {
 // curl -X GET "http://localhost:4000/episodes/search-by-title?title=BALMY%20BEACH"
 
 router.get('/search-by-title', async (req, res) => {
+  console.log('Received search request for title:', req.query.title);
   try {
     const { title, page = 1, limit = 12 } = req.query;
     if (!title) {
