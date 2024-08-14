@@ -297,8 +297,8 @@
 /* Media query for tablets (e.g., screen width less than 1024px) */
 @media (max-width: 1024px) {
   .circle-menu {
-    top: 2750px; /* Adjusted top position for tablets */
-    right: 10px; /* Slightly closer to the right edge */
+    top: 60px; /* Adjusted top position for tablets */
+    right: 5px; /* Slightly closer to the right edge */
     width: 250px; /* Slightly smaller size */
     height: 250px;
   }
@@ -307,8 +307,8 @@
 /* Media query for phones (e.g., screen width less than 768px) */
 @media (max-width: 768px) {
   .circle-menu {
-    top: 2960px; /* Adjusted top position for phones */
-    right: 350px; /* Closer to the right edge */
+    top: 360px; /* Adjusted top position for phones */
+    right: 120px; /* Closer to the right edge */
     width: 200px; /* Smaller size for smaller screens */
     height: 200px;
   }
