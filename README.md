@@ -125,5 +125,5 @@ gallery_of_bob_ross/
 ```
 
 ## Authors
-Rachel Bradford
-Parker Moore
+Rachel Bradford [GitHub](https://github.com/Moonwalkert3ch)
+Parker Moore [GitHub](https://github.com/cpmoore0317)
