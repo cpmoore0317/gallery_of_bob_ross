@@ -94,6 +94,7 @@ Unit tests for routes are located in `src/routes.test.js`. To run the tests, use
 npm test
 ```
 
+```plaintext
 gallery_of_bob_ross/
 │
 ├── data/
@@ -114,7 +115,6 @@ gallery_of_bob_ross/
 ├── js/
 │   └── scripts.js
 │
-│
 ├── css/
 │   └── styles.css
 │
@@ -122,6 +122,7 @@ gallery_of_bob_ross/
 ├── .gitignore
 ├── package.json
 └── README.md
+```
 
 ## Authors
 Rachel Bradford
