@@ -21,3 +21,7 @@
 {"level":"info","message":"Fetched episode by title","result":[{"Episode_title":"BALMY BEACH","Season":"31","episode":"10","youtube_src":"https://www.youtube.com/embed/kMgd6r6c4vE"}],"timestamp":"2024-08-14T17:03:01.834Z","title":"balmy beach"}
 {"level":"info","message":"Fetched episode by title","result":[{"Episode_title":"BALMY BEACH","Season":"31","episode":"10","youtube_src":"https://www.youtube.com/embed/kMgd6r6c4vE"}],"timestamp":"2024-08-14T17:13:08.036Z","title":"balmy beach"}
 {"level":"info","message":"Fetched episode by title","result":[{"Episode_title":"BALMY BEACH","Season":"31","episode":"10","youtube_src":"https://www.youtube.com/embed/kMgd6r6c4vE"}],"timestamp":"2024-08-14T19:03:15.867Z","title":"balmy beach"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2024-08-15T03:14:26.987Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2024-08-15T03:14:26.993Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2024-08-15T03:14:26.996Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2024-08-15T03:14:28.999Z"}

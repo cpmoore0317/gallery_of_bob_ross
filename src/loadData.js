@@ -83,3 +83,6 @@ async function run() {
 }
 
 run().catch(err => logger.error(`Unhandled error: ${err.message}`));
+
+// Export the run function
+module.exports = run;
